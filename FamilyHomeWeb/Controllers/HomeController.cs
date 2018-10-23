@@ -1,30 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using FamilyHomeWeb.Controllers.EntityFramework;
 using System.Web.Mvc;
 
 namespace FamilyHomeWeb.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
-            return View();
+            ViewModels.Home.IndexViewModel viewModel = new ViewModels.Home.IndexViewModel()
+            {
+                WeatherModel = GetWeatherInformation(),
+                MinerModel = GetMinerDetails(),
+                StockModel = GetFinanceModel(),
+                Reminders = ReminderDataController.GetTodayReminders()
+            };
+            return View(viewModel);
         }
 
-        public ActionResult About()
+        public JsonResult SelectUser(string userName)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            string retVal;
+            try
+            {
+                System.Web.HttpContext.Current.Application["User"] = userName;
+                retVal = "Good";
+            }
+            catch
+            {
+                retVal = "Bad";
+            }
+            return Json(retVal, JsonRequestBehavior.AllowGet);
         }
     }
 }

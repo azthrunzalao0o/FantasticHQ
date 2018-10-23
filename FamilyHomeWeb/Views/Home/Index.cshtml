@@ -1,31 +1,99 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model FamilyHomeWeb.ViewModels.Home.IndexViewModel
+
+@{
+    ViewBag.Title = "Home";
 }
 
+<h2>Good @Model.PartOftheDay!</h2>
+
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1><strong>@DateTime.Now.ToString("MMMM dd dddd, yyyy")</strong></h1>
+    @{
+        if (Model.WeatherModel.HasAPIError)
+        {
+            <p>@Model.WeatherModel.ErrorMessage</p>
+        }
+        else
+        {
+            <p>
+                Weather&nbsp;<span class="small-font">(Zip Code: <font color="#202ee0">@Model.ZipCode</font>)</span>&nbsp;
+                <span class="small-font italic-font">curr </span>@Model.WeatherModel.MainInfo.Temperature.ToString(@"0.0")&#8451;&nbsp;
+                <span class="small-font italic-font">low </span>@Model.WeatherModel.MainInfo.LowestTemperature.ToString(@"0.0")&#8451;&nbsp;
+                <span class="small-font italic-font">high </span>@Model.WeatherModel.MainInfo.HighestTemperature.ToString(@"0.0")&#8451;&nbsp;
+                <span><img src="http://openweathermap.org/img/w/@(Model.WeatherModel.StatusInfo.First().WeatherIconID).png" /></span>
+                @Model.WeatherModel.StatusInfo.First().WeatherStatus
+            </p>
+        }
+    }
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <h4>Today's Reminder</h4>
+        <ul class="list-group">
+            @if (Model.Reminders.Count >= 1)
+            {
+                foreach (FamilyHomeWeb.Models.EntityFramework.Reminder reminder in Model.Reminders)
+                {
+                    <li class="list-group-item">
+                        <span class="checkbox">
+                            <label><input type="checkbox" value="">@Html.Raw(reminder.Message)</label>
+                        </span>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="list-group-item">Yayy~ You are all free today!</li>
+            }
+        </ul>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    <div class="col-md-5">
+        <h4>ETH Miners&nbsp;<span class="ex-small-font italic-font">(as of @Model.MinerModel.UpdatedDateTime.ToString(@"MMM dd hh:mm tt"))</span></h4>
+        @{ 
+            if (Model.MinerModel.HasAPIError)
+            {
+                <p>@Model.MinerModel.ErrorMessage</p>
+            }
+            else
+            {
+                <ul class="list-group">
+                    @foreach (string rigId in Model.MinerModel.Rigs.Keys)
+                    {
+                        FamilyHomeWeb.Models.MinerModels.RigDetails rig = Model.MinerModel.Rigs[rigId];
+
+                        <li class="list-group-item">
+                            @rigId [@rig.RigHashes MH/s @@ @rig.RigAvgTemperature.ToString(@"0.00")&#8451;]
+                            <span class="badge" onclick="location.href='@Url.Action("Index", "Miner", new { rigId = rigId })'">Details &raquo;</span>
+                        </li>
+                    }
+                </ul>
+            }
+        }
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="col-md-3">
+        <h4>
+            Stocks&nbsp;
+            <span class="ex-small-font italic-font">(as of @Model.StockModel.UpdatedDateTime.ToString(@"MMM dd hh:mm tt"))</span>
+            <span class="badge" onclick="location.href='@Url.Action("Index", "Finance")'">more &raquo;</span>
+        </h4>
+        @{ 
+            if (Model.StockModel.HasAPIError)
+            {
+                <p>@Model.StockModel.ErrorMessage</p>
+            }
+            else
+            {
+                <ul class="list-group">
+                    @foreach (FamilyHomeWeb.Models.FinanceModels.StockDetails stock in Model.StockModel.Stocks)
+                    {
+                        <li class="list-group-item">
+                            @stock.StockCode [$@stock.CurrentPrice.ToString(@"0.00")]&nbsp;&nbsp;&nbsp;
+                            <span class="@(stock.MarketChanges >=0 ? "stock-positive-changes" : "stock-negative-changes")">@stock.MarketChanges.ToString(@"0.00")%</span>
+                        </li>
+                    }
+                </ul>
+            }
+        }
     </div>
 </div>

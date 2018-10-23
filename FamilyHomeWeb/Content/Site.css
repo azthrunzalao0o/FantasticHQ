@@ -22,3 +22,69 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.font-bold-italic {
+    font-weight: 700;
+    font-style: italic;
+}
+
+/* Custom CSS */
+.carousel-inner-content-custom {
+    width: 100%;
+    padding: 2%;
+    background-color: #808080;
+}
+
+.carousel-inner-content-custom > div {
+    padding-left: 15%;
+    color: #ffffff;
+    max-width: 90%;
+}
+
+.smaller-font {
+    font-size: smaller;
+}
+
+.ex-small-font {
+    font-size: x-small;
+}
+
+.italic-font {
+    font-style: italic;
+}
+
+.alt-text-color {
+    color: #dabdab;
+}
+
+.stock-positive-changes {
+    color: #198c19;
+    font-weight: 600;
+}
+
+.stock-negative-changes {
+    color: #cc0000;
+    font-weight: 600;
+}
+
+.gpu-info-box {
+    padding-top: 1%;
+}
+
+.gpu-info-box > div {
+    border: 1px solid #f4f4f4;
+    border-radius: 2em;
+    text-align: center;
+}
+
+.gpu-info-box > div > div {
+    padding-top: 1em;
+}
+
+.gpu-info-box-content-header {
+    font-weight: 700;
+}
+
+.gpu-warning-text-color {
+    color: #dc8a85;
+}
